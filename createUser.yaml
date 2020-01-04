@@ -1,0 +1,67 @@
+{
+    "Resources": {
+      "CompanyUser": {
+        "Type": "AWS::IAM::User"
+      },
+      "CompanyPolicy": {
+        "Type": "AWS::IAM::ManagedPolicy",
+        "Properties": {
+          "Description" : "This policy allows Company Central to gather data on IAM users, running EC2 instances and Auto Scaling groups.",
+          "PolicyDocument": {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Action": [
+                  "iam:GetGroupPolicy",
+                  "iam:GetUserPolicy",
+                  "iam:ListAttachedUserPolicies",
+                  "iam:ListUserPolicies",
+                  "iam:ListAttachedGroupPolicies",
+                  "iam:ListGroupsForUser",
+                  "iam:ListGroupsForPolicies",
+                  "iam:ListGroupPolicies",
+                  "iam:GetUser",
+                  "iam:GetPolicy",
+                  "iam:GetPolicyVersion",
+                  "ec2:DescribeInstances",
+                  "ec2:DescribeRegions",
+                  "autoscaling:DescribeAutoScalingGroups",
+                  "autoscaling:DescribeAutoScalingInstances"
+                ],
+                "Resource": "*"
+              }
+            ]
+          },
+          "Users": [{
+            "Ref": "CompanyUser"
+          }]
+        }
+      },
+      "CompanyUserKeys": {
+        "Type": "AWS::IAM::AccessKey",
+        "Properties": {
+          "UserName": {
+            "Ref": "CompanyUser"
+          }
+        }
+      }
+    },
+    "Outputs": {
+      "AccessKey": {
+        "Value": {
+          "Ref": "CompanyUserKeys"
+        },
+        "Description": "Access Key ID of Company User"
+      },
+      "SecretKey": {
+        "Value": {
+          "Fn::GetAtt": [
+            "CompanyUserKeys",
+            "SecretAccessKey"
+          ]
+        },
+        "Description": "Secret Key of Company User"
+      }
+    }
+  }
